@@ -5,6 +5,7 @@ from qiskit import QuantumCircuit
 from qiskit.quantum_info import Statevector
 
 def encode_message_to_qubits(message, chunk_size=None):
+    import numpy as np
     full_bits = ''.join(format(ord(c), '08b') for c in message)
     n_bits = len(full_bits)
 
@@ -17,6 +18,9 @@ def encode_message_to_qubits(message, chunk_size=None):
     for i, bit in enumerate(full_bits):
         if bit == '1':
             qc.x(i)
+            qc.rz(np.pi / 4, i)
+        else:
+            qc.h(i)
     return full_bits, qc
 
 def binary_to_string(binary_data):
@@ -28,7 +32,7 @@ def main():
     print(f"Original Message: {message}")
 
     # Step 1: Quantum Encode
-    bits, chunk_size = encode_message_to_qubits(message)
+    bits, qc = encode_message_to_qubits(message)
     # Bypass authentication for local simulation
     skip_auth = True  # Bypass authentication for local simulation
     print("Quantum circuit created.")
